@@ -1,0 +1,286 @@
+<html>
+    <head>
+        <meta content="utf8">
+        <title>gaussian-elimination</title> 
+        <style>
+            .Bottom{
+                line-height: 8px;
+                font-size: 5px;
+            }
+            .anSpan{
+                display: block;
+            }
+            .contorl{
+                padding: 1rem 0;
+            }
+            .contorl select{
+                margin-right: 1rem;
+            }
+            .input{
+                margin: 1rem 0rem;
+            }
+            #input > div{
+                margin: 0.5rem 0rem;
+            }
+            #input  input{
+                margin-top: 0.5rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main">
+
+        </div>
+        <script>
+            var severalX = 1;
+            var linesEquation = 1;
+            var valueEquation = [];
+            var tempData = [];
+            var answer = [];
+            getData = () => {
+                tempData = [];
+                answer = [];
+                for(let i = 0; i < linesEquation ; i ++){
+                    tempData[i] = [];
+                    for(let j = 0; j <= severalX ; j ++){
+                        answer[j] = [0];
+                            tempData[i][j] = valueEquation [i][j].value * 1;
+                    }
+                }
+               
+                console.log(tempData);
+                eliminateGo();
+            }
+            newStart = () => {
+                valueEquation = [];
+                let dgetMain = document.getElementById('main');
+                let newDiv2 = document.createElement("div");
+                dgetMain.innerHTML = '';
+                createX = () =>{
+                    newDiv2.innerHTML = '';
+                    for(let i = 0; i < linesEquation ; i ++){
+                    let newDiv = document.createElement("div");
+                    valueEquation[i]= [];
+                    tempData[i] = [];
+                    for(let j = 0; j <= severalX ; j ++){
+                        answer[j] = [0];
+                        tempData[i] = [];
+                        let newIupnt = document.createElement("input");
+                        let newSpan = document.createElement("span");
+                        let newSpan0 = document.createElement("span");
+                        newIupnt.id = 'input'+ i + j;
+                        //newIupnt.value = tempData[i][j];
+                        newIupnt.type = 'number';
+                        newSpan0.className = "Bottom";
+                        newDiv.appendChild( newIupnt);
+                        newDiv.appendChild( newSpan);
+                        valueEquation[i][j] = newIupnt;
+                        
+                            if( j < severalX ){
+                            newSpan0.innerHTML = j+1;
+                            newSpan.innerHTML = 'X' ;
+                            newSpan.appendChild(newSpan0);
+                            } 
+                            if( j < severalX - 1){
+                                newSpan.innerHTML += ' + ';
+                            }
+                            else if (j == severalX - 1){
+                                newSpan.innerHTML += ' = ';
+                            }
+                    }
+                    newDiv2.appendChild(newDiv);
+                    }
+                }
+                contorl = () =>{
+                    let newDiv1 = document.createElement('div');
+                    let newButton = document.createElement('input');
+                    let newSelect = document.createElement("select");
+                    
+                    newButton.type = 'button';
+                    newButton.value = 'START';
+                    newButton.addEventListener("click", (e) => { 
+                        getData();
+                    },false);
+                    newButton.className = 'submit';
+                    for (var i = 1; i < 50; i++) {
+                        let newOption = document.createElement("option");
+                        newOption.value = i;
+                        newOption.text = i;
+                        newSelect.appendChild(newOption);
+                    }
+                    newSelect.addEventListener("change",() =>{
+                        severalX = newSelect.value;
+                        linesEquation = newSelect.value;
+                        createX();
+                    })
+                    //newButton.onclick = getData();
+                    newDiv1.className = 'contorl';
+                    newDiv1.appendChild(newSelect);
+                    newDiv1.appendChild(newButton);
+                    dgetMain.appendChild(newDiv1);
+                }
+                
+                contorl(); 
+                newDiv2.id = "input";
+                dgetMain.appendChild(newDiv2);
+                createX();
+            }    
+            arrayFill = (i, n, v) => {
+                let a = [];
+                for (i = 0; i < n; i++) {
+                    a[i] = [];
+                }
+                return a;
+            }
+            eliminateGo = (A) => {
+                let abs = Math.abs;
+                let i, k, j;
+
+                let n = tempData.length;
+
+                for (i=0; i < n; i++) { 
+                    
+                    var maxEl = abs(tempData[i][i]),
+                        maxRow = i;
+                    for (k=i+1; k < n; k++) { 
+                        if (abs(tempData[k][i]) > maxEl) {
+                            maxEl = abs(tempData[k][i]);
+                            maxRow = k;
+                        }
+                    }
+                    console.log(k);
+
+                  
+                    for (k=i; k < n+1; k++) { 
+                        let tmp = tempData[maxRow][k];
+                        tempData[maxRow][k] = tempData[i][k];
+                        tempData[i][k] = tmp;
+                    }
+
+                    for (k=i+1; k < n; k++) { 
+                        let c = - tempData[k][i] / tempData[i][i];
+                        for (j=i; j < n+1; j++) { 
+                            if (i===j) {
+                                tempData[k][j] = 0;
+                            } else {
+                                tempData[k][j] += c * tempData[i][j];
+                            }
+                        }
+                    }
+                }
+                
+               
+                x = arrayFill(0, n, 0);
+                for (i = n-1; i > -1; i--) { 
+                    x[i][0] = tempData[i][n] / tempData[i][i];
+                    x[i][1] = [] ;
+                    //x[i][1].push(tempData[i][i] < 0 ? -tempData[i][n]: tempData[i][n]) + ' / ' + (tempData[i][i] < 0 ? -tempData[i][i]:tempData[i][i]);                    
+                    x[i][1].push(tempData[i][i] < 0 ? -tempData[i][n]: tempData[i][n]);
+                    x[i][1].push(tempData[i][i] < 0 ? -tempData[i][i]: tempData[i][i]);
+                    if(isNaN(x[i][0])){
+                        x[i][0] = 0;
+                        x[i].unshift[0] = 'N';
+                    }
+                    for (k=i-1; k > -1; k--) { 
+                        tempData[k][n] -= tempData[k][i] * x[i][0];
+                    }
+                }
+                
+                answer = x;
+                outPut();
+                return console.log(x);
+            }
+            transform = (a) => {
+                let c = 0;
+                if(a > 0){
+                    c = Math.ceil(Math.abs(Math.log10(a)));
+                }
+                else{
+                    c = Math.ceil(Math.abs(Math.log10(a*-1)));
+                }
+                let fenzi = parseInt(a * 1, 10); // 分子
+                let fenmu = parseInt(a * Math.pow(10, c), 10); // 分母
+                let newFenzi = (fenmu-fenzi);
+                let newFenmu = (Math.pow(10, c) - 1);
+                let min = Math.min(Math.abs(newFenzi), Math.abs(newFenmu)); // 较小的
+                //console.log(min, newFenzi ,newFenmu);
+                    for (let i = min; i > 1; i --) {
+                        //console.log(i, !(newFenzi % i) , !(newFenmu) % i , newFenzi , newFenmu);
+                        if (!((newFenzi % i)) && !((newFenmu % i)) ) {
+                            newFenzi = newFenzi / i;
+                            newFenmu = newFenmu / i;
+                            min = Math.min(Math.abs(newFenzi), Math.abs(newFenmu));
+                        }
+                    }
+                return [newFenzi , newFenmu];
+            }
+            miniMize = ( a , b) =>{
+                let fenzi = parseInt(a.toFixed(2) * 100, 10); 
+                let fenmu = parseInt(b.toFixed(2) * 100, 10);
+                let min = Math.min(Math.abs(fenzi), Math.abs(fenmu));
+                for (let i = min; i > 1; i --) {
+                    if (!(fenzi % i) && !(fenmu % i)) {
+                    fenzi = fenzi / i;
+                    fenmu = fenmu / i;
+                    min = Math.min(Math.abs(fenzi), Math.abs(fenmu));
+                    }
+                }
+                return fenzi +' / '+ fenmu;
+            }
+            outPut = () =>{
+                let dgetMain = document.getElementById('main');
+                if( document.getElementById('Output')){
+                    document.getElementById('Output').remove(0)
+                };
+                let newDiv = document.createElement("div");
+                    newDiv.id = 'Output';
+                     for(let j = 0 ; j < answer.length - 1 ; j++){
+                        if(answer[j][0] == '-Infinity' || answer[j][0] == 'Infinity'){
+                            answer.unshift([]);
+                            answer[0][0]= 0;
+                            break;
+                        }
+                     }
+                    if(answer[0][0] == 0){
+                        let newSpan = document.createElement("span");
+                        newSpan.innerHTML = '0 無解';
+                        newDiv.appendChild(newSpan);
+                        dgetMain.appendChild(newDiv);
+                    }
+                    else{
+                        answer.unshift([]);
+                        answer[0][0]= 1;
+                        newDiv.innerHTML += answer[0][0];
+                        for(let j = 0; j < severalX ; j ++){
+                            //answer[j] = 0;
+                            let newSpan = document.createElement("span");
+                            let newSpan0 = document.createElement("span");
+                            let newSpan1 = document.createElement("span");
+                            newSpan.className = 'anSpan';
+                            newSpan0.className = "Bottom";
+                        
+                            newDiv.appendChild( newSpan);
+                            //valueEquation[i][j] = newIupnt;
+                                if( j < linesEquation ){
+                                newSpan0.innerHTML = j + 1;
+                                newSpan.innerHTML =' X' ;
+                                newSpan.appendChild(newSpan0);
+                                } 
+                                newSpan.innerHTML +=' = '; 
+                                //newSpan.innerHTML += transform(answer[j+1][0]);
+                                //newSpan.innerHTML +=answer[j + 1][0]%1==0? answer[j + 1][0]:answer[j + 1][1] + ' or ' + transform(answer[j + 1][0]);
+                                //newSpan.innerHTML +=answer[j + 1][0]%1==0? answer[j + 1][0]:miniMize((transform(answer[j + 1][1][0])[0])  , (transform(answer[j + 1][1][0])[1]) * answer[j + 1][1][1] );
+                                newSpan.innerHTML +=answer[j + 1][0]%1==0? 
+                                    answer[j + 1][0]:miniMize(
+                                    (transform(answer[j + 1][1][0])[0]) * (transform(answer[j + 1][1][1])[1]) ,
+                                    (transform(answer[j + 1][1][0])[1]) * (transform(answer[j + 1][1][1])[0]) );
+                                newDiv.appendChild(newSpan1)
+                            }
+                            dgetMain.appendChild(newDiv);
+                        }
+                }
+            newStart();
+            eliminateGo(true);
+        </script>
+    </body>
+</html>
